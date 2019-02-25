@@ -1,0 +1,142 @@
+html {
+  height: 100%;
+}
+
+body {
+  background-image: linear-gradient(-15deg, red, yellow, green);
+}
+
+#toaster {
+  visibility: hidden;
+  background-color: #333;
+  min-width: 250px;
+  margin-left: -125px;
+  color: #fff;
+  text-align: center;
+  border-radius: 8px;
+  padding: 16px;
+  position: fixed;
+  z-index: 2147483647;
+  right: 10px;
+  top: 60px;
+  font-size: 17px;
+}
+
+#toaster.success {
+  background-color: #0D9430;
+}
+
+#toaster.error {
+  background-color: #A73B2F;
+}
+
+#toaster.show {
+  visibility: visible;
+  -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+  animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+
+@-webkit-keyframes fadein {
+  from {top: 0; opacity: 0;}
+  to {top: 60px; opacity: 1;}
+}
+
+@keyframes fadein {
+  from {top: 0; opacity: 0;}
+  to {top: 60px; opacity: 1;}
+}
+
+@-webkit-keyframes fadeout {
+  from {top: 60px; opacity: 1;}
+  to {top: 0; opacity: 0;}
+}
+
+@keyframes fadeout {
+  from {top: 60px; opacity: 1;}
+  to {top: 0; opacity: 0;}
+}
+
+.bg-inherit {
+  background: inherit;
+}
+
+.width-50 {
+  width: 50%;
+}
+
+#wait {
+  display: block;
+}
+
+#main {
+  display: none;
+}
+
+#btnSave {
+  height: 48px;
+}
+
+#mainDiv {
+  margin: 20px;
+}
+
+#status {
+  font-size:75%;
+  position: absolute;
+  top: 0; 
+  right: 0;
+}
+
+#music {
+  width: 100%;
+  height: 34px;
+}
+
+#journal {
+  text-align: left;
+  vertical-align: top;
+  height: 600px;
+}
+
+.colorpicker {
+  background-color: #ccc;
+}
+
+#RC .slider-selection {
+  background: #FF8282;
+}
+#RC .slider-handle {
+  background: red;
+}
+#GC .slider-selection {
+  background: #428041;
+}
+#GC .slider-handle {
+  background: green;
+}
+#BC .slider-selection {
+  background: #8283FF;
+}
+#BC .slider-handle {
+  background: blue;
+}
+#RC, #GC, #BC {
+  width: 100%;
+}
+
+.nav {
+  padding-left: 20px;
+  font-weight: 600;
+}
+
+.nav-pills a {
+  color:white;
+}
+
+.nav-pills>li>a:hover {
+  background-color: #D7D83C;
+}
+
+.nav-pills .open>a, .nav-pills .open>a:active, .nav-pills .open>a:focus{
+  background-color: #D7D83C;
+}

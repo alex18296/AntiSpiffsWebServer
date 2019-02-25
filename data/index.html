@@ -1,0 +1,92 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>AntiSpiffsWebServer</title>
+<link href="css/bootstrap.min.css" rel="stylesheet" >
+<link href="css/bootstrap-toggle.min.css" rel="stylesheet" >
+<link href="css/bootstrap-slider.css" rel="stylesheet" >
+<link href="css/styles.css" rel="stylesheet" >
+<link rel="icon" href="img/favicon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon"/>
+<script src="js/jquery-2.2.4.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/bootstrap-toggle.min.js"></script>
+<script src="js/bootstrap-slider.js"></script>
+</head>
+<body onLoad="on_load();">
+<h3 class="text-center" id="wait">Пожалуйста подождите...</h3>
+<div id="main">
+  <div id="mainDiv">
+    <div id="toaster" onclick="this.className = this.className.replace('show', '');"></div>
+    <span id="status">
+      Размер свободного хипа: <label id="heap">???</label> <br/>
+    </span>
+    <!--ul class="nav nav-tabs"-->
+    <ul class="nav nav-pills">
+      <li class="active"><a data-toggle="tab" href="#conf">Настройка</a></li>
+      <li><a data-toggle="tab" href="#jour">Журнал</a></li>
+    </ul>    
+    <div class="tab-content">
+      <div id="conf" class="tab-pane fade in active">
+        <div class="panel-body">
+          <div class="row">
+            <div class="col-xs-12">
+              <div class="input-group">
+                <span class="input-group-addon width-50">
+                  <input data-toggle="toggle" data-onstyle="success" data-off="Чекбокс выключен" data-on="Чекбокс включен" data-width="100%" type="checkbox" id="checkbox1">
+                </span>
+                <span class="input-group-addon width-50">
+                  <select id="music">
+                    <option disabled value="">Выберите музыку</option>
+                    <option value="reggae">Регги</option>
+                    <option value="chillout">Чилл-аут</option>
+                    <option value="hardrock">Хардрок</option>
+                  </select>
+                </span>
+                <button type="button" class="btn btn-success pull-right" id="btnSave" onclick="save_config()">Сохранить</button>
+              </div>
+            </div>            
+          </div>
+          <div class="row">
+            <div class="col-xs-12">
+              <div class="input-group">
+                <span class="input-group-addon">Строка:</span>
+                <input type="text" class="form-control" id="string1">
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-xs-4">
+              <div class="colorpicker">
+                <input type="text" data-slider-min="0" data-slider-max="255" data-slider-step="1" data-slider-id="RC" id="R"/>
+              </div>
+            </div>
+            <div class="col-xs-4">
+              <div class="colorpicker">
+                <input type="text" data-slider-min="0" data-slider-max="255" data-slider-step="1" data-slider-id="GC" id="G"/>
+              </div>
+            </div>
+            <div class="col-xs-4">
+              <div class="colorpicker">
+                <input type="text" data-slider-min="0" data-slider-max="255" data-slider-step="1" data-slider-id="BC" id="B"/>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="jour" class="tab-pane fade">
+        <div class="panel-body">
+          <div class="row">
+            <div class="col-xs-12">
+              <span id="journal" class="input-group-addon"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="js/scripts.js"></script>
+</body>
+</html>

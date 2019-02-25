@@ -1,0 +1,1 @@
+recipe.hooks.sketch.prebuild.0.pattern = powershell.exe -file {runtime.platform.path}\prebuild.local.ps1 {build.source.path} {build.path} {build.project_name}

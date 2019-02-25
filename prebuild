@@ -1,0 +1,128 @@
+#!/bin/bash
+
+# Определим словарь типов контента
+declare -A contentTypes
+contentTypes['.html']='text/html'
+contentTypes['.htm']='text/html'
+contentTypes['.js']='application/javascript'
+contentTypes['.css']='text/css'
+contentTypes['.json']='application/json'
+contentTypes['.text']='text/plain'
+contentTypes['.txt']='text/plain'
+contentTypes['.ico']='image/x-icon'
+contentTypes['.png']='image/png'
+contentTypes['.gif']='image/gif'
+contentTypes['.jpeg']='image/jpeg'
+contentTypes['.jpg']='image/jpeg'
+contentTypes['.svg']='image/svg+xml'
+
+# Установим имя файла исходника для сохранения
+memcontent=memcontent.h
+
+html2progmem () {
+  # Определим массивы для хранения
+  # имени запрашиваемого url
+  local names=()
+  # имени соответствующей переменной в PROGMEM
+  local tags=()
+  # типа контента
+  local types=()
+  # признака сжатого контента
+  local zips=()
+
+  # Устанавливаем минимальный размер файла для передачи без сжатия
+  local min_size=2000
+  # Удаляем прежний memcontent.h
+  rm -f $memcontent
+  # Определим флаг, что индекс.хтмл не найден
+  local index_file_found='false'
+
+  # Сохраняем дату генерации файла
+  printf '// File generated date: ' > $memcontent
+  date -R >> $memcontent
+
+  # Обрабатываем все файлы в директории ./data
+  for d in $(ls -d $(find ./data)); do
+    # Это файл, не директория
+    if [ -f "${d}" ]; then
+      if [ ! -s $d ]; then
+        echo Warning: file $d is empty, ignored this file
+      else
+        # Получаем длину файла
+        local file_size=$(wc -c <"$d")
+        # Выделяем расширение файла
+        local ext=.${d##*.}
+        ext=${ext,,}
+        # Удаляем из имени файла название директории './data'
+        local req_name=${d:6}
+        # Строим название переменной для PROGMEM из имени файла, заменяем спец. символы в имени на '_'
+        local tag=${req_name//[-.\ \/]/_}
+        # Если файл индекс.хтмл - установим флаг в true
+        if [ "$tag" = "_index_html" ]; then
+          index_file_found='true'
+        fi
+        # Вычисляем тип контента
+        local c_type="${contentTypes[$ext]}"
+        # Тип контента не определили, установим в application/octet-stream
+        if [ -z "$c_type" ]; then
+          c_type='application/octet-stream'
+          echo Warning: content type is not detected for file $d, set as $c_type
+        fi
+        #echo file\($req_name\) size\($file_size\) type\($ext\) PROGMEM\($tag\) content\($c_type\)
+
+        # Сохраняем данные в виде си-исходника
+        printf '\n//############ %s ############\n' $req_name >> $memcontent
+        printf 'static const char %s[] PROGMEM = {\n' $tag >> $memcontent
+        # Проверяем минимальную длину файла
+        if [ $file_size -ge $min_size ]; then
+          # Если длина файла превышает минимальную, пережимаем данные и сохраняем в шестнадцатеричном представлении
+          gzip -cf $d | xxd -i >> $memcontent
+          # Устанавливаем флаг - контент сжатый
+          zips+=(1)
+        else
+          # Сохраняем в шестнадцатеричном представлении
+          xxd -i < $d >> $memcontent
+          # Устанавливаем флаг - контент не сжатый
+          zips+=(0)
+        fi
+        printf '};\n' >> $memcontent
+        # Запоминаем имя запрашиваемого url
+        names+=($req_name)
+        # Запоминаем имя соответствующей переменной в PROGMEM
+        tags+=($tag)
+        # Запоминаем типа контента
+        types+=($c_type)
+      fi
+    fi
+  done
+  # Если индекс.хтмл не нашли, сообщим об этом
+  if [ "$index_file_found" = "false" ]; then
+    echo Warning: index.html not found
+  fi
+  # Сохраняем структуру, описывающую переменные, которые мы построили в PROGMEM
+  local count=${#names[*]}
+  printf '\nstatic struct content_info _ci[%d] PROGMEM = {\n' $count >> $memcontent
+  count=$((count - 1))
+  for index in ${!names[*]}; do
+    printf '  {"%s", "%s", %s, sizeof(%s), %d}' ${names[$index]} ${types[$index]} ${tags[$index]} ${tags[$index]} ${zips[$index]} >> $memcontent
+    if [ $index != $count ]; then
+      printf ',' >> $memcontent
+    fi
+    printf '\n' >> $memcontent
+  done
+  printf '};\n' >> $memcontent
+}
+
+html2progmem
+
+if [ "$1" ]; then 
+  cp -f $memcontent $1/sketch/
+  if [ "$2" ]; then 
+    echo Меняем YourRouterSSID и YourRouterPassword в $2
+    ino=$(<$2)
+    ino=${ino/YourRouterSSID/$WIFI_SSID}
+    ino=${ino/YourRouterPassword/$WIFI_PASSWORD}
+    echo Обновляем $1/sketch/$2.cpp
+    echo "$ino" >$1/sketch/$2.cpp
+  fi
+fi

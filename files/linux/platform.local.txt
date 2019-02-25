@@ -1,0 +1,1 @@
+recipe.hooks.sketch.prebuild.0.pattern = {runtime.platform.path}/prebuild.local {build.source.path} {build.path} {build.project_name}
